@@ -94,15 +94,24 @@ class Stereorectification(object):
         # img3, img4 = drawlines(imgR_gray, imgL_gray, lines2, pts2, pts1)
         #
 
+        camM1 = self.cameraModel.camera_model['M1']
+        camM2 = self.cameraModel.camera_model['M2']
+        distC1 = self.cameraModel.camera_model['dist1']
+        distC2 = self.cameraModel.camera_model['dist2']
+        imgSize = self.left.shape
+        R = self.cameraModel.camera_model['R']
+        T = self.cameraModel.camera_model['T']
+        r1, r2, p1, p2, q, roi1, roi2 = cv.stereoRectify(cameraMatrix1=camM1, cameraMatrix2=camM2, distCoeffs1=distC1, distCoeffs2=distC2, imageSize=imgSize, R=R, T=T)
+
         # Stereo rectification
         h1, w1 = self.left.shape
         h2, w2 = self.right.shape
-        _, H1, H2 = cv.stereoRectifyUncalibrated(
-            np.float32(pts1), np.float32(pts2), fundamental_matrix, imgSize=(w1, h1)
-        )
+        # _, H1, H2 = cv.stereoRectifyUncalibrated(
+        #     np.float32(pts1), np.float32(pts2), fundamental_matrix, imgSize=(w1, h1)
+        # )
 
         # Rectify (undistort) the images and save them
-        left_rectified = cv.warpPerspective(self.left, H1, (w1, h1))
-        right_rectified = cv.warpPerspective(self.right, H2, (w2, h2))
+        left_rectified = cv.warpPerspective(self.left, r1, (w1, h1))
+        right_rectified = cv.warpPerspective(self.right, r2, (w2, h2))
 
         return left_rectified, right_rectified

@@ -52,8 +52,8 @@ class StereoCalibration:
                 # Draw and display the corners
                 ret_l = cv2.drawChessboardCorners(img_l, (9, 6),
                                                   corners_l, ret_l)
-                cv2.imshow(images_left[i], img_l)
-                cv2.waitKey()
+                #cv2.imshow(images_left[i], img_l)
+                #cv2.waitKey()
 
             if ret_r is True:
                 rt = cv2.cornerSubPix(gray_r, corners_r, (11, 11),
@@ -63,8 +63,8 @@ class StereoCalibration:
                 # Draw and display the corners
                 ret_r = cv2.drawChessboardCorners(img_r, (9, 6),
                                                   corners_r, ret_r)
-                cv2.imshow(images_right[i], img_r)
-                cv2.waitKey()
+                #cv2.imshow(images_right[i], img_r)
+                #cv2.waitKey()
             img_shape = gray_l.shape[::-1]
 
         rt, self.M1, self.d1, self.r1, self.t1 = cv2.calibrateCamera(
@@ -96,14 +96,14 @@ class StereoCalibration:
             self.d2, dims,
             criteria=stereocalib_criteria, flags=flags)
 
-        print('Intrinsic_mtx_1', M1)
-        print('dist_1', d1)
-        print('Intrinsic_mtx_2', M2)
-        print('dist_2', d2)
-        print('R', R)
-        print('T', T)
-        print('E', E)
-        print('F', F)
+        # print('Intrinsic_mtx_1', M1)
+        # print('dist_1', d1)
+        # print('Intrinsic_mtx_2', M2)
+        # print('dist_2', d2)
+        # print('R', R)
+        # print('T', T)
+        # print('E', E)
+        # print('F', F)
 
         # for i in range(len(self.r1)):
         #     print("--- pose[", i+1, "] ---")

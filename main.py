@@ -68,9 +68,7 @@ def splitImage(path):
     return leftImage, rightimage
 
 
-
-
-def createTrackbars(cv, winName):
+def createTrackbars():
     cv.createTrackbar('numDisparities', winName, 1, 17, nothing)
     cv.createTrackbar('blockSize', winName, 5, 50, nothing)
     cv.createTrackbar('uniquenessRatio', winName, 15, 100, nothing)
@@ -81,7 +79,7 @@ def createTrackbars(cv, winName):
         cv.createTrackbar('P2', winName, 400, 1100, nothing)
 
 
-def updateTrackbars(cv, winName):
+def updateTrackbars():
     # Updating the parameters based on the trackbar positions
     numDisparities = cv.getTrackbarPos('numDisparities', winName) * 16
     blockSize = cv.getTrackbarPos('blockSize', winName) * 2 + 5
@@ -102,7 +100,7 @@ def updateTrackbars(cv, winName):
 
 
 def computeDisparity(stereo, recti1, recti2, color = False):
-    numdisp, mindisp = updateTrackbars(cv, winName)
+    numdisp, mindisp = updateTrackbars()
 
     # Calculating disparity using the StereoBM algorithm
     disp = stereo.compute(recti1, recti2)
@@ -130,9 +128,9 @@ if __name__ == '__main__':
 
     winName = 'disparity'
     cv.namedWindow(winName, cv.WINDOW_NORMAL)
-    cv.resizeWindow('depth', 900, 900)
+    cv.resizeWindow(winName, 900, 900)
 
-    createTrackbars(cv, winName)
+    createTrackbars()
 
     # sets default on stereoBM
     stereo = cv.StereoBM_create()
@@ -153,6 +151,7 @@ if __name__ == '__main__':
     cameraModel = Stereocalibration.StereoCalibration()
     # rectify the images so they're alligned properly
     rectification = Stereorectification.Stereorectification(imgL_gray, imgR_gray, cameraModel)
+
 
     while True:
         disparity = computeDisparity(stereo, rectification.left, rectification.right, color=False)
