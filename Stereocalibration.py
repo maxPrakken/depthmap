@@ -112,12 +112,9 @@ class StereoCalibration:
         #     print('Ext1', self.ext1)
         #     print('Ext2', self.ext2)
 
-        print('')
-
         camera_model = dict([('M1', M1), ('M2', M2), ('dist1', d1),
                             ('dist2', d2), ('rvecs1', self.r1),
                             ('rvecs2', self.r2), ('R', R), ('T', T),
                             ('E', E), ('F', F)])
 
-        cv2.destroyAllWindows()
         return camera_model

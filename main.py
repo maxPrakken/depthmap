@@ -69,7 +69,7 @@ def splitImage(path):
 
 
 def createTrackbars():
-    cv.createTrackbar('numDisparities', winName, 1, 17, nothing)
+    cv.createTrackbar('numDisparities', winName, 1, 15, nothing)
     cv.createTrackbar('blockSize', winName, 5, 50, nothing)
     cv.createTrackbar('uniquenessRatio', winName, 15, 100, nothing)
     cv.createTrackbar('minDisparity', winName, 5, 25, nothing)
