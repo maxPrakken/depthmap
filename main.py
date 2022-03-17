@@ -122,7 +122,7 @@ def nothing(x):
 
 
 if __name__ == '__main__':
-    methodUsed = Algorithm.STEREO_SGBM
+    methodUsed = Algorithm.STEREO_BM
 
     imgL_gray, imgR_gray = loadImages(blur=0)
 

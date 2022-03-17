@@ -14,7 +14,7 @@ class StereoCalibration:
                              cv2.TERM_CRITERIA_MAX_ITER, 100, 1e-5)
 
         # prepare object points, like (0,0,0), (1,0,0), (2,0,0) ....,(6,5,0)
-        self.objp = np.zeros((9*6, 3), np.float32)
+        self.objp = np.zeros((9 * 6, 3), np.float32)
         self.objp[:, :2] = np.mgrid[0:9, 0:6].T.reshape(-1, 2)
 
         # Arrays to store object points and image points from all the images.
@@ -52,8 +52,8 @@ class StereoCalibration:
                 # Draw and display the corners
                 ret_l = cv2.drawChessboardCorners(img_l, (9, 6),
                                                   corners_l, ret_l)
-                #cv2.imshow(images_left[i], img_l)
-                #cv2.waitKey()
+                # cv2.imshow(images_left[i], img_l)
+                # cv2.waitKey()
 
             if ret_r is True:
                 rt = cv2.cornerSubPix(gray_r, corners_r, (11, 11),
@@ -63,8 +63,8 @@ class StereoCalibration:
                 # Draw and display the corners
                 ret_r = cv2.drawChessboardCorners(img_r, (9, 6),
                                                   corners_r, ret_r)
-                #cv2.imshow(images_right[i], img_r)
-                #cv2.waitKey()
+                # cv2.imshow(images_right[i], img_r)
+                # cv2.waitKey()
             img_shape = gray_l.shape[::-1]
 
         rt, self.M1, self.d1, self.r1, self.t1 = cv2.calibrateCamera(
@@ -76,45 +76,30 @@ class StereoCalibration:
 
     def stereo_calibrate(self, dims):
         flags = 0
-        flags |= cv2.CALIB_FIX_INTRINSIC
+        # flags |= cv2.CALIB_FIX_INTRINSIC
         # flags |= cv2.CALIB_FIX_PRINCIPAL_POINT
-        flags |= cv2.CALIB_USE_INTRINSIC_GUESS
+        # flags |= cv2.CALIB_USE_INTRINSIC_GUESS
         flags |= cv2.CALIB_FIX_FOCAL_LENGTH
-        # flags |= cv2.CALIB_FIX_ASPECT_RATIO
+        flags |= cv2.CALIB_FIX_ASPECT_RATIO
         flags |= cv2.CALIB_ZERO_TANGENT_DIST
         # flags |= cv2.CALIB_RATIONAL_MODEL
-        # flags |= cv2.CALIB_SAME_FOCAL_LENGTH
+        flags |= cv2.CALIB_SAME_FOCAL_LENGTH
         # flags |= cv2.CALIB_FIX_K3
         # flags |= cv2.CALIB_FIX_K4
         # flags |= cv2.CALIB_FIX_K5
 
         stereocalib_criteria = (cv2.TERM_CRITERIA_MAX_ITER +
                                 cv2.TERM_CRITERIA_EPS, 100, 1e-5)
+
         ret, M1, d1, M2, d2, R, T, E, F = cv2.stereoCalibrate(
             self.objpoints, self.imgpoints_l,
             self.imgpoints_r, self.M1, self.d1, self.M2,
             self.d2, dims,
             criteria=stereocalib_criteria, flags=flags)
 
-        # print('Intrinsic_mtx_1', M1)
-        # print('dist_1', d1)
-        # print('Intrinsic_mtx_2', M2)
-        # print('dist_2', d2)
-        # print('R', R)
-        # print('T', T)
-        # print('E', E)
-        # print('F', F)
-
-        # for i in range(len(self.r1)):
-        #     print("--- pose[", i+1, "] ---")
-        #     self.ext1, _ = cv2.Rodrigues(self.r1[i])
-        #     self.ext2, _ = cv2.Rodrigues(self.r2[i])
-        #     print('Ext1', self.ext1)
-        #     print('Ext2', self.ext2)
-
         camera_model = dict([('M1', M1), ('M2', M2), ('dist1', d1),
-                            ('dist2', d2), ('rvecs1', self.r1),
-                            ('rvecs2', self.r2), ('R', R), ('T', T),
-                            ('E', E), ('F', F)])
+                             ('dist2', d2), ('rvecs1', self.r1),
+                             ('rvecs2', self.r2), ('R', R), ('T', T),
+                             ('E', E), ('F', F)])
 
         return camera_model

@@ -61,24 +61,6 @@ class Stereorectification(object):
         pts1 = pts1[inliers.ravel() == 1]
         pts2 = pts2[inliers.ravel() == 1]
 
-        # Visualize epilines
-        # def drawlines(img1src, img2src, lines, pts1src, pts2src):
-        #         #img1 - image on which we draw the epilines for the points in img2
-        #         #lines - corresponding epilines
-        #     r, c = img1src.shape
-        #     img1color = cv.cvtColor(img1src, cv.COLOR_GRAY2BGR)
-        #     img2color = cv.cvtColor(img2src, cv.COLOR_GRAY2BGR)
-        #     # Edit: use the same random seed so that two images are comparable!
-        #     np.random.seed(0)
-        #     for r, pt1, pt2 in zip(lines, pts1src, pts2src):
-        #         color = tuple(np.random.randint(0, 255, 3).tolist())
-        #         x0, y0 = map(int, [0, -r[2] / r[1]])
-        #         x1, y1 = map(int, [c, -(r[2] + r[0] * c) / r[1]])
-        #         img1color = cv.line(img1color, (x0, y0), (x1, y1), color, 1)
-        #         img1color = cv.circle(img1color, tuple(pt1), 5, color, -1)
-        #         img2color = cv.circle(img2color, tuple(pt2), 5, color, -1)
-        #     return img1color, img2color
-        #
         # # Find epilines corresponding to points in right image (second image) and
         # # drawing its lines on left image
         # lines1 = cv.computeCorrespondEpilines(
@@ -94,24 +76,39 @@ class Stereorectification(object):
         # img3, img4 = drawlines(imgR_gray, imgL_gray, lines2, pts2, pts1)
         #
 
+        # get data from calibrated camera model
         camM1 = self.cameraModel.camera_model['M1']
         camM2 = self.cameraModel.camera_model['M2']
         distC1 = self.cameraModel.camera_model['dist1']
         distC2 = self.cameraModel.camera_model['dist2']
-        imgSize = self.left.shape
+        imgSize = tuple(reversed(self.left.shape)) # reverse tuple cause stereorectify expects w-h not h-w
         R = self.cameraModel.camera_model['R']
         T = self.cameraModel.camera_model['T']
         r1, r2, p1, p2, q, roi1, roi2 = cv.stereoRectify(cameraMatrix1=camM1, cameraMatrix2=camM2, distCoeffs1=distC1, distCoeffs2=distC2, imageSize=imgSize, R=R, T=T)
 
-        # Stereo rectification
         h1, w1 = self.left.shape
         h2, w2 = self.right.shape
-        # _, H1, H2 = cv.stereoRectifyUncalibrated(
-        #     np.float32(pts1), np.float32(pts2), fundamental_matrix, imgSize=(w1, h1)
-        # )
 
-        # Rectify (undistort) the images and save them
+        # Rectify (undistort) the images
         left_rectified = cv.warpPerspective(self.left, r1, (w1, h1))
         right_rectified = cv.warpPerspective(self.right, r2, (w2, h2))
 
         return left_rectified, right_rectified
+
+    # Visualize epilines
+    def drawlines(img1src, img2src, lines, pts1src, pts2src):
+            #img1 - image on which we draw the epilines for the points in img2
+            #lines - corresponding epilines
+        r, c = img1src.shape
+        img1color = cv.cvtColor(img1src, cv.COLOR_GRAY2BGR)
+        img2color = cv.cvtColor(img2src, cv.COLOR_GRAY2BGR)
+        # Edit: use the same random seed so that two images are comparable!
+        np.random.seed(0)
+        for r, pt1, pt2 in zip(lines, pts1src, pts2src):
+            color = tuple(np.random.randint(0, 255, 3).tolist())
+            x0, y0 = map(int, [0, -r[2] / r[1]])
+            x1, y1 = map(int, [c, -(r[2] + r[0] * c) / r[1]])
+            img1color = cv.line(img1color, (x0, y0), (x1, y1), color, 1)
+            img1color = cv.circle(img1color, tuple(pt1), 5, color, -1)
+            img2color = cv.circle(img2color, tuple(pt2), 5, color, -1)
+        return img1color, img2color
