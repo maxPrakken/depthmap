@@ -150,7 +150,7 @@ if __name__ == '__main__':
     # calibrate camera model
     cameraModel = Stereocalibration.StereoCalibration()
     # rectify the images so they're alligned properly
-    rectification = Stereorectification.Stereorectification(imgL_gray, imgR_gray, cameraModel)
+    rectification = Stereorectification.Stereorectification(imgL_gray, imgR_gray)
 
 
     while True:

@@ -116,13 +116,15 @@ class Stereorectification(object):
 
         else: # calibrated using stereocalibration
             # get data from calibrated camera model
-            camM1 = self.cameraModel.camera_model['M1']
-            camM2 = self.cameraModel.camera_model['M2']
-            distC1 = self.cameraModel.camera_model['dist1']
-            distC2 = self.cameraModel.camera_model['dist2']
+
+            camM1 = self.cameraModel.camera_model['M1'] # camera matrix
+            camM2 = self.cameraModel.camera_model['M2'] # camera matrix
+            distC1 = self.cameraModel.camera_model['dist1'] # lens distortion coefficient
+            distC2 = self.cameraModel.camera_model['dist2'] # lens distortion coefficient
             imgSize = tuple(reversed(self.left.shape)) # reverse tuple cause stereorectify expects w-h not h-w
-            R = self.cameraModel.camera_model['R']
-            T = self.cameraModel.camera_model['T']
+            R = self.cameraModel.camera_model['R'] # rotation matrix between cameras
+            T = self.cameraModel.camera_model['T'] # translation vector
+            F = self.cameraModel.camera_model['F'] # fundamental matrix
             r1, r2, p1, p2, q, roi1, roi2 = cv.stereoRectify(cameraMatrix1=camM1, cameraMatrix2=camM2, distCoeffs1=distC1, distCoeffs2=distC2, imageSize=imgSize, R=R, T=T)
 
             option = cv.CV_16SC2
@@ -133,8 +135,14 @@ class Stereorectification(object):
             left_rectified = cv.remap(self.left, map1x, map1y, inter)
             right_rectified = cv.remap(self.right, map2x, map2y, inter)
 
-            cv.imshow('rect', left_rectified)
+
+            cv.namedWindow('leftrect', cv.WINDOW_NORMAL)
+            cv.imshow('leftrect', left_rectified)
+            cv.resizeWindow('leftrect', (600, 600))
+
+            cv.namedWindow('rectright', cv.WINDOW_NORMAL)
             cv.imshow('rectright', right_rectified)
+            cv.resizeWindow('rectright', (600, 600))
 
             return left_rectified, right_rectified
 
