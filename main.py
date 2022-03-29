@@ -102,7 +102,7 @@ def updateTrackbars():
 def computeDisparity(stereo, recti1, recti2, color = False):
     numdisp, mindisp = updateTrackbars()
 
-    # Calculating disparity using the StereoBM algorithm
+    # Calculating disparity
     disp = stereo.compute(recti1, recti2)
 
     # Converting to float32
@@ -122,7 +122,7 @@ def nothing(x):
 
 
 if __name__ == '__main__':
-    methodUsed = Algorithm.STEREO_BM
+    methodUsed = Algorithm.STEREO_SGBM
 
     imgL_gray, imgR_gray = loadImages(blur=0)
 
@@ -148,7 +148,7 @@ if __name__ == '__main__':
 
 
     # calibrate camera model
-    cameraModel = Stereocalibration.StereoCalibration()
+    cameraModel = Stereocalibration.StereoCalibration(loadmodel=True)
     # rectify the images so they're alligned properly
     rectification = Stereorectification.Stereorectification(imgL_gray, imgR_gray)
 
